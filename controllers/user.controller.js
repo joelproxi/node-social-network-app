@@ -6,16 +6,37 @@ module.exports.getAllUsers = async (req, res) => {
   res.status(200).json(users);
 };
 
-module.exports.getUser = (req, res) => {
-  console.log(req.params);
+module.exports.getUser = async (req, res) => {
+  console.log(req.params.id);
   if (!ObjectId.isValid(req.params.id)) {
     return res.status(400).send("ID Unknown : " + req.params.id);
   }
-  UserModel.findById(req.params.id, (err, docs) => {
-    if (!err) {
-      return res.send(docs);
-    } else {
-      console.log("ID Unknown : " + err);
-    }
-  }).select("-password");
+  try {
+    const user = await UserModel.findById({ _id: req.params.id }).select(
+      "-password"
+    );
+    if (user) {
+      return res.status(200).json(user);
+    } else return res.status(400).send("ID Unknown : " + req.params.id);
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
+
+module.exports.updateUser = async (req, res) => {
+  if (!ObjectId.isValid(req.params.id)) {
+    return res.status(400).send("ID Unknown : " + req.params.id);
+  }
+  try {
+    const user = await UserModel.findByIdAndUpdate(
+      { _id: req.params.id },
+      req.body,
+      { new: true }
+    );
+    if (user) {
+      return res.status(200).json(user);
+    } else return res.status(400).send("ID Unknown : " + req.params.id);
+  } catch (error) {
+    throw new Error(error.message);
+  }
 };
