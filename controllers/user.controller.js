@@ -25,7 +25,7 @@ module.exports.getUser = async (req, res) => {
 
 module.exports.updateUser = async (req, res) => {
   if (!ObjectId.isValid(req.params.id)) {
-    return res.status(400).send("ID Unknown : " + req.params.id);
+    return res.status(404).send("ID Unknown : " + req.params.id);
   }
   try {
     const user = await UserModel.findByIdAndUpdate(
@@ -35,7 +35,20 @@ module.exports.updateUser = async (req, res) => {
     );
     if (user) {
       return res.status(200).json(user);
-    } else return res.status(400).send("ID Unknown : " + req.params.id);
+    } else return res.status(400).send("User Not Found ");
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
+
+module.exports.deleteUser = async (req, res) => {
+  if (!ObjectId.isValid(req.params.id)) {
+    return res.status(404).json({ message: "Unknown id: " + req.params.id });
+  }
+
+  try {
+    await UserModel.findByIdAndRemove({ _id: req.params.id }).exec();
+    res.status(204).json({ message: "User deleted" });
   } catch (error) {
     throw new Error(error.message);
   }
