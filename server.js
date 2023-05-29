@@ -1,19 +1,23 @@
 const express = require("express");
-const userRoutes = require("./routes/user.routes");
 const dotEnv = require("dotenv");
-const dbConnection = require("./config/db");
+const dbConnexion = require("./databases/connexion");
 
+//Constant
 dotEnv.config({ path: "./config/.env" });
+const PORT = process.env.PORT || 3001;
+
+// database configuration
+dbConnexion();
 
 const app = express();
 
-dbConnection();
-
+// Request payaload url Encoder
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
-// Routes
-app.use("/api/user", userRoutes);
+// Handler for routers
+app.use("/api/v1/user", require("./routes/userRoute"));
 
-app.listen(process.env.PORT, () => {
-  console.log(`Server stared on http://localhost:${process.env.PORT}`);
+app.listen(PORT, function () {
+  console.log(`Server is running on http://localhost:${PORT}`);
 });

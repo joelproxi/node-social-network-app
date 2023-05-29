@@ -1,6 +1,4 @@
 const mongoose = require("mongoose");
-const bcrypt = require("bcrypt");
-const { isEmail } = require("validator");
 
 const userSchema = new mongoose.Schema(
   {
@@ -8,54 +6,51 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: true,
       minLength: 3,
-      maxLength: 255,
+      maxLength: 50,
       unique: true,
       trim: true,
     },
-
     email: {
       type: String,
       required: true,
-      lowercase: true,
+      unique: true,
       trim: true,
-      validate: [isEmail],
+      lowercase: true,
     },
     password: {
       type: String,
       required: true,
-      max: 1024,
       minLength: 6,
+      maxLength: 1024,
       trim: true,
     },
     bio: {
       type: String,
-      max: 1024,
+      trim: true,
+      maxLength: 500,
+    },
+    followers: {
+      type: [String],
+      default: [],
     },
     following: {
       type: [String],
+      default: [],
     },
-    like: {
+    likes: {
       type: [String],
+      default: [],
     },
   },
   {
     timestamps: true,
     toObject: {
       transform: (doc, ret, options) => {
-        ret.id = ret._id;
-        delete ret._id;
-        delete ret.password;
-        delete ret._v;
-        return ret;
+        (ret.id = _ret.id), delete ret._id, delete ret.__v, delete ret.password;
+        delete ret;
       },
     },
   }
 );
 
-userSchema.pre("save", async function (next) {
-  const salt = await bcrypt.genSalt();
-  this.password = await bcrypt.hash(this.password, salt);
-  next();
-});
-
-module.exports = mongoose.model("User", userSchema);
+module.exports = mongoose.model("UserModel", userSchema);
