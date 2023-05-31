@@ -46,7 +46,7 @@ const userSchema = new mongoose.Schema(
     timestamps: true,
     toObject: {
       transform: (doc, ret, options) => {
-        (ret.id = _ret.id), delete ret._id, delete ret.__v, delete ret.password;
+        (ret.id = ret.id), delete ret._id, delete ret.__v, delete ret.password;
         delete ret;
       },
     },

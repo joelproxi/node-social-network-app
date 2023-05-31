@@ -1,5 +1,10 @@
 const { signUp } = require("../controllers/authController");
-const { getAllUsers, getUserInfo } = require("../controllers/userController");
+const {
+  getAllUsers,
+  getUserInfo,
+  updateUserProfile,
+  deleteUserProfile,
+} = require("../controllers/userController");
 
 const router = require("express").Router();
 
@@ -8,6 +13,8 @@ router.post("/register", signUp);
 
 // User routes
 router.get("/", getAllUsers);
-router.get("/:id ", getUserInfo);
+router.get("/:id", getUserInfo);
+router.put("/:id", updateUserProfile);
+router.delete("/:id", deleteUserProfile);
 
 module.exports = router;
